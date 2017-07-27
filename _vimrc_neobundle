@@ -1,0 +1,216 @@
+"""""""""""""""""""""""""""
+" .vimrc 
+""""""""""""""""""""""""""""
+
+set nocompatible
+
+"構文に色をつける
+syntax on
+"行番号をつける
+set number
+"画面上のタブ文字が占める幅
+set tabstop=2
+"自動インシデントでずれる幅
+set shiftwidth=2
+"連続した空白に対してタブキー,バックスペースキーでカーソル
+set softtabstop=2
+"カーソル行の背景色を変える
+set cursorline
+"カーソル位置のカラムの背景色を変えない
+set nocursorcolumn
+"ステータス行を表示
+set laststatus=2
+"メッセージ表示欄を確保
+set cmdheight=2
+"対応する括弧を強調
+set showmatch
+
+
+if has('vim_starting')
+  set runtimepath+=~/.vim/bundle/neobundle.vim
+endif
+call neobundle#begin(expand('~/.vim/bundle/'))
+NeoBundleFetch 'Shougo/neobundle.vim'
+
+NeoBundle 'scrooloose/nerdtree'
+" Ctrl+eでNERDtreeが開く
+nnoremap <silent><C-e> :NERDTreeToggle<CR>
+
+"自動補完
+NeoBundle 'Shougo/neocomplete.vim'
+
+" auto-ctagsを使ってファイル保存時にtagsファイルを更新
+let g:auto_ctags = 1
+
+" 起動時に有効化
+let g:neocomplcache_enable_at_startup = 1
+
+" 大文字が入力されるまで大文字小文字の区別を無視する
+let g:neocomplcache_enable_smart_case = 1
+
+" _(アンダースコア)区切りの補完を有効化
+let g:neocomplcache_enable_underbar_completion = 1
+
+let g:neocomplcache_enable_camel_case_completion  =  1
+
+" 最初の補完候補を選択状態にする
+let g:neocomplcache_enable_auto_select = 1
+
+" ポップアップメニューで表示される候補の数
+let g:neocomplcache_max_list = 20
+
+" シンタックスをキャッシュするときの最小文字長
+let g:neocomplcache_min_syntax_length = 3
+
+" 補完が誤爆した時に<Ctr+h>消せるように
+inoremap <expr><C-h> neocomplcache#smart_close_popup().”\<C-h>”
+
+" 補完の設定
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
+if !exists('g:neocomplete#force_omni_input_patterns')
+  let g:neocomplete#force_omni_input_patterns = {}
+endif
+let g:neocomplete#force_omni_input_patterns.ruby = '[^.*\t]\.\w*\|\h\w*::'
+let g:neocomplete#force_omni_input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
+let g:neocomplete#force_omni_input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+
+
+if !exists('g:neocomplete#keyword_patterns')
+        let g:neocomplete#keyword_patterns = {}
+endif
+let g:neocomplete#keyword_patterns['default'] = '[^. *\t]\.\w*\|\h\w*::'
+
+" ファイルオープンを便利に
+NeoBundle 'Shougo/unite.vim'
+NeoBundle 'Shougo/vimproc.vim', {
+			\ 'build' : {
+			\     'windows' : 'tools\\update-dll-mingw',
+			\     'cygwin' : 'make -f make_cygwin.mak',
+			\     'mac' : 'make -f make_mac.mak',
+			\     'linux' : 'make',
+			\     'unix' : 'gmake',
+			\    },
+			\ }
+NeoBundle 'Shougo/vimshell.vim'
+NeoBundle 'Shougo/vimfiler'
+
+" makeできるように
+NeoBundle 'Shougo/unite-build'
+" Unite.vimで最近使ったファイルを表示できるようにする
+NeoBundle 'Shougo/neomru.vim'
+
+"memolist.vim
+NeoBundle 'glidenote/memolist.vim'
+
+"markdownのプラグイン
+NeoBundle 'plasticboy/vim-markdown'
+NeoBundle 'kannokanno/previm'
+"NeoBundle 'kazuph/previm', 'feature/add-plantuml-plugin'
+NeoBundle 'tyru/open-browser.vim'
+
+"lightlineのプラグイン(下のバーの色変える)
+NeoBundle 'itchyny/lightline.vim'
+
+""""""""""""""""""""""
+" markdownの設定
+""""""""""""""""""""""
+
+set syntax=markdown
+au BufRead,BufNewFile *.md set filetype=markdown
+
+"""""""""""""""""""""""
+" memolistの設定
+"""""""""""""""""""""""
+map <Leader>mn :MemoNew<CR>
+map <Leader>ml :MemoList<CR>
+map <Leader>mg :MemoGrep<CR>
+let g:memolist_path = "~/Dropbox/memo"
+let g:memolist_template_path = "~/.vim/template"
+let g:memolist_memo_suffix = "md"
+let g:memolist_memo_date = "%Y-%m-%d"
+let g:memolist_prompt_tags = 1
+let g:memolist_unite = 1
+let g:memolist_unite_source = "file_rec"
+let g:memolist_unite_option = "-auto-preview -start-insert"
+
+""""""""""""""""""""""""
+" Unite.vimの設定
+""""""""""""""""""""""""
+" バッファ一覧
+noremap <C-P> :Unite buffer<CR>
+" " ファイル一覧
+noremap <C-N> :Unite -buffer-name=file file<CR>
+" " 最近使ったファイルの一覧
+noremap <C-Z> :Unite file_mru<CR>
+
+""""""""""""""""""""""""
+" lightlineの設定
+""""""""""""""""""""""""
+let g:lightline = {
+      \ 'colorscheme': 'wombat',
+			\ 'component': {
+      \   'readonly': '%{&readonly?"\u2b64":""}',
+      \ },
+			\ 'separator':    { 'left': ">", 'right': "<" },
+      \ 'mode_map': {'c': 'NORMAL'},
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ]
+			\ },
+      \ 'component_function': {
+      \   'modified': 'LightLineModified',
+      \   'readonly': 'LightLineReadonly',
+			\   'fugitive': 'LightLineFugitive',
+      \   'filename': 'LightLineFilename',
+			\   'fileformat': 'LightLineFileformat',
+      \   'filetype': 'LightLineFiletype',
+      \   'fileencoding': 'LightLineFileencoding',
+      \   'mode': 'LightLineMode'
+      \ }
+			\ }
+
+function! LightLineModified()
+	  return &ft =~ 'help\|vimfiler\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
+	endfunction
+
+function! LightLineReadonly()
+	  return &ft !~? 'help\|vimfiler\|gundo' && &readonly ? 'x' : ''
+endfunction
+
+function! LightLineFilename()
+	  return ('' != LightLineReadonly() ? LightLineReadonly() . ' ' : '') .
+		        \ (&ft == 'vimfiler' ? vimfiler#get_status_string() :
+		        \  &ft == 'unite' ? unite#get_status_string() :
+		        \  &ft == 'vimshell' ? vimshell#get_status_string() :
+		        \ '' != expand('%:t') ? expand('%:t') : '[No Name]') .
+		        \ ('' != LightLineModified() ? ' ' . LightLineModified() : '')
+endfunction
+
+function! LightLineFugitive()
+	  try
+			if &ft !~? 'vimfiler\|gundo' && exists('*fugitive#head')
+				return fugitive#head()
+			endif
+		catch
+		  endtry
+			return ''
+endfunction
+
+function! LightLineFileformat()
+	  return winwidth(0) > 70 ? &fileformat : ''
+endfunction
+
+function! LightLineFiletype()
+	  return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype : 'no ft') : ''
+endfunction
+
+function! LightLineFileencoding()
+	  return winwidth(0) > 70 ? (strlen(&fenc) ? &fenc : &enc) : ''
+endfunction
+
+function! LightLineMode()
+	  return winwidth(0) > 60 ? lightline#mode() : ''
+endfunction
+
+call neobundle#end()
+filetype plugin indent on

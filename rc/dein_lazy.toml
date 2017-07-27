@@ -1,0 +1,100 @@
+# Ctrl+eでNERDtreeが開く
+[[plugins]]
+repo = 'scrooloose/nerdtree'
+hook_add = 'nnoremap <silent><C-e> :NERDTreeToggle<CR>'
+
+
+[[plugins]]
+repo = 'Shougo/neocomplete.vim'
+on_i = 1
+hook_source = '''
+	let g:auto_ctags = 1
+	let g:neocomplcache_enable_at_startup = 1
+	let g:neocomplcache_enable_smart_case = 1
+	let g:neocomplcache_enable_underbar_completion = 1
+	let g:neocomplcache_enable_camel_case_completion  =  1
+	let g:neocomplcache_enable_auto_select = 1
+	let g:neocomplcache_max_list = 20 
+	let g:neocomplcache_min_syntax_length = 3
+	
+	autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+	autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
+	if !exists('g:neocomplete#force_omni_input_patterns')
+  	let g:neocomplete#force_omni_input_patterns = {}
+	endif
+	let g:neocomplete#force_omni_input_patterns.ruby = '[^.*\t]\.\w*\|\h\w*::'
+	let g:neocomplete#force_omni_input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
+	let g:neocomplete#force_omni_input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+
+
+	if !exists('g:neocomplete#keyword_patterns')
+  	let g:neocomplete#keyword_patterns = {}
+	endif
+	let g:neocomplete#keyword_patterns['default'] = '[^. *\t]\.\w*\|\h\w*::'
+
+	'''
+# 補完が誤爆した時に<Ctr+h>消せるように
+hook_add = 'inoremap <expr><C-h> neocomplcache#smart_close_popup().”\<C-h>”'
+
+[[plugins]]
+repo = 'Shougo/vimproc.vim'
+build = 'make'
+
+[[plugins]]
+repo = 'Shougo/vimshell.vim'
+
+[[plugins]]
+repo = 'Shougo/vimfiler'
+
+[[plugins]]
+repo      = 'Shougo/neomru.vim'
+on_path = '.*'
+on_source = ['unite.vim']
+
+[[plugins]]
+repo = 'Shougo/unite.vim'
+depends = 'neomru.vim'
+hook_add = '''
+	noremap <C-P> :Unite buffer<CR>
+	noremap <C-N> :Unite -buffer-name=file file<CR>
+	noremap <C-Z> :Unite file_mru<CR>
+'''
+
+
+
+[[plugins]]
+repo = 'glidenote/memolist.vim'
+on_source = '''
+	let g:memolist_path = "~/Dropbox/memo"
+  let g:memolist_template_path = "~/.vim/template"
+  let g:memolist_memo_suffix = "md"
+  let g:memolist_memo_date = "%Y-%m-%d"
+  let g:memolist_prompt_tags = 1
+  let g:memolist_unite = 1
+  let g:memolist_unite_source = "file_rec"
+  let g:memolist_unite_option = "-auto-preview -start-insert"
+	'''
+hook_add = '''
+	map <Leader>mn :MemoNew<CR>
+	map <Leader>ml :MemoList<CR>
+  map <Leader>mg :MemoGrep<CR>
+'''
+
+[[plugins]]
+repo = 'plasticboy/vim-markdown'
+on_ft = ['markdown', 'md']
+hook_source = '''
+	set syntax=markdown
+  au BufRead,BufNewFile *.md set filetype=markdown
+	'''
+
+[[plugins]]
+repo = 'kannokanno/previm'
+
+[[plugins]]
+repo = 'tyru/open-browser.vim'
+
+[[plugins]]
+repo = 'Shougo/neosnippet.vim'
+
+[[plugins]]

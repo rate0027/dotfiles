@@ -1,0 +1,11 @@
+#zmodload zsh/zprof && zprof
+
+# 環境変数
+export LANG=ja_JP.UTF-8
+export PATH=~/bin:$PATH
+export PATH=/usr/local/bin/gcc-arm-none-eabi-5_3-2016q1/bin:$PATH
+export PATH=~/.cabal/bin:$PATH
+
+export PYENV_ROOT=$HOME/.pyenv
+export PATH=$PYENV_ROOT/bin:$PATH
+

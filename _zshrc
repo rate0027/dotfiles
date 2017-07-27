@@ -1,0 +1,151 @@
+#色の設定
+#-----------------------------------------------
+#プロンプトに色を設定
+autoload -Uz colors
+colors
+# 補完時の色の設定
+export LS_COLORS='di=01;34:ln=01;35:so=01;32:ex=01;31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
+# ZLS_COLORSとは？
+export ZLS_COLORS=$LS_COLORS
+# lsコマンド時、自動で色がつく(ls -Gのようなもの？)
+export CLICOLOR=true
+# 補完候補に色を付ける
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+
+
+
+# 補完機能
+#------------------------------------------------
+# 補完機能を有効にする
+fpath=(${HOME}/.zsh/functions/Completion ${fpath})
+autoload -Uz compinit
+compinit
+
+# 補完で小文字でも大文字にマッチさせる
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+ 
+# ../ の後は今いるディレクトリを補完しない
+zstyle ':completion:*' ignore-parents parent pwd ..
+ 
+# sudo の後ろでコマンド名を補完する
+zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
+                   /usr/sbin /usr/bin /sbin /bin /usr/X11R6/bin
+ 
+# ps コマンドのプロセス名補完
+zstyle ':completion:*:processes' command 'ps x -o pid,s,args'
+
+#ディレクトリ名だけで移動する
+setopt auto_cd
+# cd したら自動的にpushdする
+setopt auto_pushd
+# 重複したディレクトリを追加しない
+setopt pushd_ignore_dups
+
+#もしかして機能
+setopt correct 
+ 
+# グローバルエイリアス
+alias -g L='| less'
+alias -g G='| grep'
+
+alias la="ls -a"
+alias lf="ls -F"
+alias ll="ls -l"
+
+alias du="du -h"
+alias df="df -h"
+
+alias su="su -l"
+alias dockerstart="/Applications/Docker/Docker\ Quickstart\ Terminal.app/Contents/Resources/Scripts/start.sh"
+
+hash -d etrobo=/Users/rate/etrobo/EV3RT/hrp2/sdk/ieryukyu
+
+# ヒストリの設定
+HISTFILE=~/.zsh_history
+HISTSIZE=1000000
+SAVEHIST=1000000
+ 
+
+#ターミナルコンフィグレーション
+case "${TERM}" in
+xterm|xterm-color|kterm|kterm-color)
+    precmd() {
+        echo -ne "\033]0;${USER}@${HOST%%.*}:${PWD}\007"
+    }   
+    ;;  
+esac
+
+# vim 風キーバインドにする
+bindkey -v
+ 
+# 日本語ファイル名を表示可能にする
+setopt print_eight_bit
+ 
+# beep を無効にする
+setopt no_beep
+ 
+# フローコントロールを無効にする
+setopt no_flow_control
+ 
+# Ctrl+Dでzshを終了しない
+setopt ignore_eof
+ 
+# '#' 以降をコメントとして扱う
+setopt interactive_comments
+
+#PROMPT変数内で変数参照する
+setopt prompt_subst
+
+
+# Git
+#---------------------------------------------
+#autoload -Uz vcs_info
+#zstyle ':vcs_info:*' enable git svn hg bzr
+#zstyle ':vcs_info:*' check-for-changes true
+#zstyle ':vcs_info:*' stagedstr "+"
+#zstyle ':vcs_info:*' unstagedstr "*"
+#zstyle ':vcs_info:*' formats '(%b%c%u)'    
+#zstyle ':vcs_info:*' actionformats '(%b(%a)%c%u)'    
+
+# プロンプト表示直前にvcs_info呼び出し    
+#function precmd_func () {
+#    psvar=()
+#    LANG=en_US.UTF-8 vcs_info
+#    [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
+#} 
+#--------------------------------------------
+
+# 起動時に前回のカレントディレクトリに移動する
+#function chpwd_func1() {
+#	sed -i -e "s:^cd .* #catcat:cd $PWD #catcat:g" ~/.zshrc
+#}
+#cd /Users/e145763 #catcat
+
+#タブにディレクトリ表示する
+function chpwd_func2() { echo -ne "\033]0;$(pwd | rev | awk -F \/ '{print "/"$1"/"$2"/"$3}'| rev)\007"}
+
+autoload -Uz add-zsh-hook
+PERIOD=2
+#add-zsh-hook chpwd chpwd_func1
+add-zsh-hook chpwd chpwd_func2
+#add-zsh-hook precmd precmd_func
+
+
+#プロンプト
+PROMPT="%{${fg[cyan]}%}[%n]%{${reset_color}%}# " 
+RPROMPT=[%d%f]
+
+
+#rbenvの設定
+eval "$(rbenv init -)"
+
+#pyenvの設定
+eval "$(pyenv init -)"
+
+# vim:set ft=zsh :
+[ -f ${HOME}/.zshrc.mine ] && source ${HOME}/.zshrc.mine
+
+# 速度を早くするために... 
+if (which zprof > /dev/null) ;then
+  zprof | less
+fi
